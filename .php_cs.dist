@@ -1,0 +1,41 @@
+<?php
+
+$rules = [
+    '@Symfony' => true,
+    '@Symfony:risky' => true,
+    '@PHP71Migration' => true,
+    '@PHP71Migration:risky' => true,
+    'binary_operator_spaces' => true,
+    'blank_line_after_opening_tag' => true,
+    'compact_nullable_typehint' => true,
+    'declare_equal_normalize' => true,
+    'lowercase_static_reference' => true,
+    'new_with_braces' => true,
+    'no_leading_import_slash' => true,
+    'no_whitespace_in_blank_line' => true,
+    'short_scalar_cast' => true,
+    'single_blank_line_before_namespace' => true,
+    'single_trait_insert_per_statement' => true,
+    'ternary_operator_spaces' => true,
+    'unary_operator_spaces' => true,
+    'visibility_required' => \PHP_VERSION_ID < 70100 ? true : [
+        'elements' => [
+            'const',
+            'method',
+            'property',
+        ],
+    ],
+    'class_definition' => [
+        'multiLineExtendsEachSingleLine' =>true,
+        'singleItemSingleLine' => true,
+        'singleLine' => false,
+    ],
+];
+
+return PhpCsFixer\Config::create()
+    ->setFinder(PhpCsFixer\Finder::create()
+        ->in(__DIR__ . '/src')
+        ->in(__DIR__ . '/tests')
+    )
+    ->setRules($rules)
+    ->setRiskyAllowed(true);
