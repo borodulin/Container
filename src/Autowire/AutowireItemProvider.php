@@ -9,6 +9,7 @@ use Borodulin\Container\Autowire\Item\CallableItem;
 use Borodulin\Container\Autowire\Item\ClassItem;
 use Borodulin\Container\Container;
 use Borodulin\Container\ContainerException;
+use Borodulin\Container\NotFoundException;
 
 class AutowireItemProvider
 {
@@ -37,11 +38,16 @@ class AutowireItemProvider
 
     /**
      * @throws ContainerException
+     * @throws NotFoundException
      */
     public function autowire(AutowireItemInterface $item): object
     {
         if ($item instanceof AliasItem) {
-            $instance = $this->container->get($item->getAlias());
+            if ($this->container->has($item->getAlias())) {
+                $instance = $this->container->get($item->getAlias());
+            } else {
+                $instance = $this->dependencyResolver->resolve($item->getAlias());
+            }
             $this->resolvedItems[$item->getId()] = $instance;
 
             return $instance;
