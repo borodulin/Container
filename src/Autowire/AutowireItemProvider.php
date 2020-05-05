@@ -43,11 +43,7 @@ class AutowireItemProvider
     public function autowire(AutowireItemInterface $item): object
     {
         if ($item instanceof AliasItem) {
-            if ($this->container->has($item->getAlias())) {
-                $instance = $this->container->get($item->getAlias());
-            } else {
-                $instance = $this->dependencyResolver->resolve($item->getAlias());
-            }
+            $instance = $this->dependencyResolver->resolve($item->getAlias());
             $this->resolvedItems[$item->getId()] = $instance;
 
             return $instance;

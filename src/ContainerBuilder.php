@@ -9,7 +9,6 @@ use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\Autowire\Item\AliasItem;
 use Borodulin\Container\Autowire\Item\CallableItem;
 use Borodulin\Container\Autowire\Item\ClassItem;
-use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
@@ -33,7 +32,7 @@ class ContainerBuilder
     private $classNameExtractor;
 
     public function __construct(
-        FileFinder $fileFinder,
+        FileFinder $fileFinder = null,
         iterable $config = [],
         CacheInterface $cache = null
     ) {
@@ -47,7 +46,7 @@ class ContainerBuilder
      * @throws ContainerException
      * @throws InvalidArgumentException
      */
-    public function build(): ContainerInterface
+    public function build(): Container
     {
         if ($this->cache && $this->cache->has(static::class)) {
             $compilerItems = unserialize($this->cache->get(static::class));
@@ -56,19 +55,23 @@ class ContainerBuilder
 
             foreach ($this->config as $id => $item) {
                 if (\is_string($item)) {
+                    $id = \is_int($id) ? $item : $id;
                     $compilerItems[$id] = new AliasItem($id, $item);
                 } elseif (\is_callable($item)) {
+                    $id = (string) $id;
                     $compilerItems[$id] = new CallableItem($id, $item);
                 } else {
                     throw new ContainerException('Unsupported item type');
                 }
             }
 
-            foreach ($this->fileFinder as $fileName) {
-                $className = $this->classNameExtractor->extract($fileName);
-                if (null !== $className) {
-                    if (!isset($compilerItems[$className])) {
-                        $compilerItems[$className] = new ClassItem($className);
+            if (null !== $this->fileFinder) {
+                foreach ($this->fileFinder as $fileName) {
+                    $className = $this->classNameExtractor->extract($fileName);
+                    if (null !== $className) {
+                        if (!isset($compilerItems[$className])) {
+                            $compilerItems[$className] = new ClassItem($className);
+                        }
                     }
                 }
             }
