@@ -61,7 +61,7 @@ class DependencyResolver
             } elseif ($parameter->isOptional()) {
                 $result[] = null;
             } elseif ($parameter->getClass()) {
-                $result[] = $this->resolve($parameter->getClass());
+                $result[] = $this->resolve($parameter->getClass()->getName());
             }
         }
 
