@@ -84,7 +84,7 @@ class AutowireItemProvider
     public function tryResolve(string $id): void
     {
         if (isset($this->resolvingItems[$id])) {
-            throw new ContainerException("$id has recursive dependency.");
+            throw new ContainerException("$id has circular reference dependency.");
         }
         $this->resolvingItems[$id] = true;
     }

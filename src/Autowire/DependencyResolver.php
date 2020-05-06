@@ -77,7 +77,11 @@ class DependencyResolver
                     $result[] = $this->resolve($parameter->getClass()->getName());
                 }
             } else {
-                throw new ContainerException("Unable to autowire parameter {$parameter->getName()} of {$constructor->class}");
+                throw new ContainerException(sprintf(
+                    'Unable to autowire parameter %s of %s',
+                    $parameter->getName(),
+                    $constructor->class
+                ));
             }
         }
 

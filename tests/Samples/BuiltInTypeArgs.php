@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Container\Tests\ParameterBag\Samples;
+namespace Borodulin\Container\Tests\Samples;
 
-class Foo
+class BuiltInTypeArgs
 {
     /**
      * @var int
@@ -15,7 +15,7 @@ class Foo
      */
     private $param2;
     /**
-     * @var iterable
+     * @var iterable|null
      */
     private $param3;
 
@@ -36,7 +36,7 @@ class Foo
         return $this->param2;
     }
 
-    public function getParam3(): iterable
+    public function getParam3(): ?iterable
     {
         return $this->param3;
     }

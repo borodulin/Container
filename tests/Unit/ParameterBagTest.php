@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Container\Tests\ParameterBag;
+namespace Borodulin\Container\Tests\Unit;
 
 use Borodulin\Container\Container;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
-use Borodulin\Container\Tests\ParameterBag\Samples\Foo;
+use Borodulin\Container\Tests\Samples\BuiltInTypeArgs;
 use PHPUnit\Framework\TestCase;
 
 class ParameterBagTest extends TestCase
@@ -15,17 +15,17 @@ class ParameterBagTest extends TestCase
     public function testError(): void
     {
         $container = (new ContainerBuilder())
-            ->setConfig([Foo::class])
+            ->setConfig([BuiltInTypeArgs::class])
             ->build();
 
         $this->expectException(ContainerException::class);
-        $container->get(Foo::class);
+        $container->get(BuiltInTypeArgs::class);
     }
 
     public function testParamBugAutowire(): void
     {
         $container = (new ContainerBuilder())
-            ->setConfig([Foo::class])
+            ->setConfig([BuiltInTypeArgs::class])
             ->build();
 
         $parameterBag = new Container([
@@ -36,12 +36,12 @@ class ParameterBagTest extends TestCase
 
         $container->setParameterBag($parameterBag);
 
-        /** @var Foo $foo */
-        $foo = $container->get(Foo::class);
+        /** @var BuiltInTypeArgs $instance */
+        $instance = $container->get(BuiltInTypeArgs::class);
 
-        $this->assertInstanceOf(Foo::class, $foo);
-        $this->assertEquals(1, $foo->getParam1());
-        $this->assertEquals('test', $foo->getParam2());
-        $this->assertEquals([1, 2, 3], $foo->getParam3());
+        $this->assertInstanceOf(BuiltInTypeArgs::class, $instance);
+        $this->assertEquals(1, $instance->getParam1());
+        $this->assertEquals('test', $instance->getParam2());
+        $this->assertEquals([1, 2, 3], $instance->getParam3());
     }
 }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Container\Tests\DelegateContainer;
+namespace Borodulin\Container\Tests\Unit;
 
 use Borodulin\Container\ContainerBuilder;
-use Borodulin\Container\Tests\DelegateContainer\Samples\Bar;
-use Borodulin\Container\Tests\DelegateContainer\Samples\Foo;
+use Borodulin\Container\Tests\Samples\Bar;
+use Borodulin\Container\Tests\Samples\Foo;
 use PHPUnit\Framework\TestCase;
 
 class DelegateContainerTest extends TestCase

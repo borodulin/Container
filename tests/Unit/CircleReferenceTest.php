@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Container\Tests\DependencyRecursion;
+namespace Borodulin\Container\Tests\Unit;
 
 use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
-use Borodulin\Container\Tests\DependencyRecursion\Sample\Foo;
+use Borodulin\Container\Tests\Samples\CircleReference\Egg;
 use PHPUnit\Framework\TestCase;
 
-class RecursionTest extends TestCase
+class CircleReferenceTest extends TestCase
 {
-    public function testRecursion(): void
+    public function testCircleReference(): void
     {
         $fileFinder = (new FileFinder())
-            ->addPath(__DIR__.'/Sample');
+            ->addPath(__DIR__.'/../Samples');
         $container = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
             ->build();
 
         $this->expectException(ContainerException::class);
-        $container->get(Foo::class);
+        $container->get(Egg::class);
     }
 }
