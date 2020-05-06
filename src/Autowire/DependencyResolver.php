@@ -47,7 +47,16 @@ class DependencyResolver
     private function resolveConstructor(\ReflectionMethod $constructor): array
     {
         $result = [];
+        $parameterBag = $this->itemProvider->getContainer()->getParameterBag();
         foreach ($constructor->getParameters() as $parameter) {
+            if (null !== $parameterBag) {
+                if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
+                    if ($parameterBag->has($parameter->getName())) {
+                        $result[] = $parameterBag->get($parameter->getName());
+                        continue;
+                    }
+                }
+            }
             if ($parameter->isVariadic()) {
                 if ($parameter->getClass()) {
                     foreach ($this->findAllImplementors($parameter->getClass()->getName()) as $implementor) {
@@ -67,6 +76,8 @@ class DependencyResolver
                 } else {
                     $result[] = $this->resolve($parameter->getClass()->getName());
                 }
+            } else {
+                throw new ContainerException("Unable to autowire parameter {$parameter->getName()} of {$constructor->class}");
             }
         }
 

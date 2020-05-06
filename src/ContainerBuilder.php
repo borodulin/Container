@@ -25,20 +25,14 @@ class ContainerBuilder
     /**
      * @var iterable
      */
-    private $config;
+    private $config = [];
     /**
      * @var ClassNameExtractor
      */
     private $classNameExtractor;
 
-    public function __construct(
-        FileFinder $fileFinder = null,
-        iterable $config = [],
-        CacheInterface $cache = null
-    ) {
-        $this->fileFinder = $fileFinder;
-        $this->cache = $cache;
-        $this->config = $config;
+    public function __construct()
+    {
         $this->classNameExtractor = new ClassNameExtractor();
     }
 
@@ -78,5 +72,26 @@ class ContainerBuilder
         }
 
         return new Container($compilerItems);
+    }
+
+    public function setConfig(iterable $config): self
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    public function setCache(?CacheInterface $cache): self
+    {
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+    public function setFileFinder(FileFinder $fileFinder): self
+    {
+        $this->fileFinder = $fileFinder;
+
+        return $this;
     }
 }

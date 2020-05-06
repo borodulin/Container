@@ -24,6 +24,11 @@ class Container implements ContainerInterface
      */
     private $delegates = [];
 
+    /**
+     * @var ContainerInterface|null
+     */
+    private $parameterBag;
+
     public function __construct(array $items)
     {
         $this->items = $items;
@@ -46,6 +51,7 @@ class Container implements ContainerInterface
         foreach ($this->delegates as $container) {
             if ($container->has($id)) {
                 $this->items[$id] = $container->get($id);
+
                 return $this->items[$id];
             }
         }
@@ -78,6 +84,18 @@ class Container implements ContainerInterface
     public function delegate(ContainerInterface $container): self
     {
         $this->delegates[] = $container;
+
+        return $this;
+    }
+
+    public function getParameterBag(): ?ContainerInterface
+    {
+        return $this->parameterBag;
+    }
+
+    public function setParameterBag(?ContainerInterface $parameterBag): self
+    {
+        $this->parameterBag = $parameterBag;
 
         return $this;
     }

@@ -16,8 +16,9 @@ class RecursionTest extends TestCase
     {
         $fileFinder = (new FileFinder())
             ->addPath(__DIR__.'/Sample');
-        $builder = new ContainerBuilder($fileFinder);
-        $container = $builder->build();
+        $container = (new ContainerBuilder())
+            ->setFileFinder($fileFinder)
+            ->build();
 
         $this->expectException(ContainerException::class);
         $container->get(Foo::class);

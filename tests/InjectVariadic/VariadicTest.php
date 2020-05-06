@@ -15,8 +15,9 @@ class VariadicTest extends TestCase
     {
         $fileFinder = (new FileFinder())
             ->addPath(__DIR__.'/Sample');
-        $builder = new ContainerBuilder($fileFinder);
-        $container = $builder->build();
+        $container = (new ContainerBuilder())
+            ->setFileFinder($fileFinder)
+            ->build();
         $common = $container->get(Common::class);
 
         $this->assertCount(3, $common->getCommonInterfaces());

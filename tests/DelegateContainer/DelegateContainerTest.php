@@ -13,13 +13,13 @@ class DelegateContainerTest extends TestCase
 {
     public function testDelegate(): void
     {
-        $container1 = (new ContainerBuilder(null, [
-            Bar::class,
-        ]))->build();
+        $container1 = (new ContainerBuilder())
+            ->setConfig([Bar::class])
+            ->build();
 
-        $container2 = (new ContainerBuilder(null, [
-            Foo::class,
-        ]))->build();
+        $container2 = (new ContainerBuilder())
+            ->setConfig([Foo::class])
+            ->build();
 
         $container2->delegate($container1);
 
