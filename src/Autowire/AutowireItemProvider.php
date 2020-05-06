@@ -97,4 +97,12 @@ class AutowireItemProvider
 
         return $this->ids;
     }
+
+    /**
+     * @return Container
+     */
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
 }

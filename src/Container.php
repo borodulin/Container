@@ -6,9 +6,7 @@ namespace Borodulin\Container;
 
 use Borodulin\Container\Autowire\AutowireItemInterface;
 use Borodulin\Container\Autowire\AutowireItemProvider;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class Container implements ContainerInterface
 {
@@ -17,17 +15,14 @@ class Container implements ContainerInterface
      */
     private $items;
     /**
-     * @var ContainerInterface
-     */
-    private $majorContainer;
-    /**
-     * @var ContainerInterface
-     */
-    private $minorContainer;
-    /**
      * @var AutowireItemProvider
      */
     private $autowireItemProvider;
+
+    /**
+     * @var ContainerInterface[]
+     */
+    private $delegates = [];
 
     public function __construct(array $items)
     {
@@ -36,23 +31,10 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Finds an entry of the container by its identifier and returns it.
-     *
-     * @param string $id identifier of the entry to look for
-     *
-     * @return mixed entry
-     *
-     * @throws ContainerExceptionInterface error while retrieving the entry
-     * @throws NotFoundExceptionInterface  no entry was found for **this** identifier
+     * {@inheritdoc}
      */
     public function get($id)
     {
-        if ($this->majorContainer) {
-            if ($this->majorContainer->has($id)) {
-                return $this->majorContainer->get($id);
-            }
-        }
-
         if (isset($this->items[$id])) {
             if ($this->items[$id] instanceof AutowireItemInterface) {
                 $this->items[$id] = $this->autowireItemProvider->autowire($this->items[$id]);
@@ -61,39 +43,26 @@ class Container implements ContainerInterface
             return $this->items[$id];
         }
 
-        if ($this->minorContainer) {
-            if ($this->minorContainer->has($id)) {
-                return $this->minorContainer->get($id);
+        foreach ($this->delegates as $container) {
+            if ($container->has($id)) {
+                $this->items[$id] = $container->get($id);
+                return $this->items[$id];
             }
         }
         throw new NotFoundException($id);
     }
 
     /**
-     * Returns true if the container can return an entry for the given identifier.
-     * Returns false otherwise.
-     *
-     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
-     * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
-     *
-     * @param string $id identifier of the entry to look for
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function has($id)
     {
-        if ($this->majorContainer) {
-            if ($this->majorContainer->has($id)) {
-                return true;
-            }
-        }
-
         if (isset($this->items[$id])) {
             return true;
         }
 
-        if ($this->minorContainer) {
-            if ($this->minorContainer->has($id)) {
+        foreach ($this->delegates as $container) {
+            if ($container->has($id)) {
                 return true;
             }
         }
@@ -101,22 +70,15 @@ class Container implements ContainerInterface
         return false;
     }
 
-    public function setMajorContainer(ContainerInterface $majorContainer): self
-    {
-        $this->majorContainer = $majorContainer;
-
-        return $this;
-    }
-
-    public function setMinorContainer(ContainerInterface $minorContainer): self
-    {
-        $this->minorContainer = $minorContainer;
-
-        return $this;
-    }
-
     public function getIds(): array
     {
         return array_keys($this->items);
+    }
+
+    public function delegate(ContainerInterface $container): self
+    {
+        $this->delegates[] = $container;
+
+        return $this;
     }
 }

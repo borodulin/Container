@@ -14,7 +14,7 @@ class VariadicTest extends TestCase
     public function testVariadic(): void
     {
         $fileFinder = (new FileFinder())
-            ->in(__DIR__.'/Sample');
+            ->addPath(__DIR__.'/Sample');
         $builder = new ContainerBuilder($fileFinder);
         $container = $builder->build();
         $common = $container->get(Common::class);

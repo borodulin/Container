@@ -6,9 +6,14 @@ namespace Borodulin\Container\Autowire;
 
 class FileFinder implements \IteratorAggregate
 {
-    private $paths = [];
+    private $paths;
 
-    public function in(string $path): self
+    public function __construct(array $paths = [])
+    {
+        $this->paths = $paths;
+    }
+
+    public function addPath(string $path): self
     {
         $this->paths[] = $path;
 

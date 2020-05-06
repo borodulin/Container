@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Container\Tests\MiddlewareContainer\Samples;
+namespace Borodulin\Container\Tests\DelegateContainer\Samples;
 
 class Foo
 {

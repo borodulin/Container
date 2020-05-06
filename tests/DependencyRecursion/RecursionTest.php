@@ -15,7 +15,7 @@ class RecursionTest extends TestCase
     public function testRecursion(): void
     {
         $fileFinder = (new FileFinder())
-            ->in(__DIR__.'/Sample');
+            ->addPath(__DIR__.'/Sample');
         $builder = new ContainerBuilder($fileFinder);
         $container = $builder->build();
 
