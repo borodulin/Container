@@ -68,9 +68,9 @@ class AutowireItemProvider
         return isset($this->resolvedItems[$id]);
     }
 
-    public function getResolved($id): ?object
+    public function getResolved($id): object
     {
-        return $this->resolvedItems[$id] ?? null;
+        return $this->resolvedItems[$id];
     }
 
     public function setResolved(string $id, object $object): void
