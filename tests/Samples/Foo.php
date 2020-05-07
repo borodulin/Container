@@ -15,4 +15,9 @@ class Foo
     {
         $this->bar = $bar;
     }
+
+    public function getId(): int
+    {
+        return 0;
+    }
 }

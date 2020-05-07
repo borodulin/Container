@@ -69,6 +69,9 @@ class ContainerBuilder
                     }
                 }
             }
+            if ($this->cache) {
+                $this->cache->set(static::class, serialize($compilerItems));
+            }
         }
 
         return new Container($compilerItems);
