@@ -81,8 +81,6 @@ class DependencyResolver
                 }
             } elseif ($parameter->isDefaultValueAvailable()) {
                 $result[] = $parameter->getDefaultValue();
-            } elseif ($parameter->isOptional()) {
-                $result[] = null;
             } elseif ($parameter->getClass()) {
                 $className = $parameter->getClass()->getName();
                 if ($this->itemProvider->getContainer()->has($className)) {

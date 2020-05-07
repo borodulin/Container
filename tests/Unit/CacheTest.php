@@ -7,6 +7,8 @@ namespace Borodulin\Container\Tests\Unit;
 use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
+use Borodulin\Container\Tests\Samples\Bar;
+use Borodulin\Container\Tests\Samples\Foo;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 
@@ -27,6 +29,12 @@ class CacheTest extends TestCase
             ->addPath(__DIR__.'/../Samples');
         (new ContainerBuilder())
             ->setFileFinder($fileFinder)
+            ->setConfig([
+                'test.closure' => function (Bar $bar) {
+                    return new Foo($bar);
+                },
+                'test.alias' => 'test.closure',
+            ])
             ->setCache($cache)
             ->build();
         $this->assertIsArray($this->cache);
