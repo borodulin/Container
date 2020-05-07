@@ -21,11 +21,16 @@ class ConfigureContainerTest extends TestCase
                 'test.foo' => function (ContainerInterface $container) {
                     return new Foo($container->get('test.bar'));
                 },
+                Foo::class => function (Bar $bar) {
+                    return new Foo($bar);
+                },
             ])
             ->build();
 
         $foo = $container->get('test.foo');
+        $this->assertInstanceOf(Foo::class, $foo);
 
+        $foo = $container->get(Foo::class);
         $this->assertInstanceOf(Foo::class, $foo);
     }
 

@@ -32,6 +32,7 @@ class Container implements ContainerInterface
     public function __construct(array $items)
     {
         $this->items = $items;
+        $this->items[ContainerInterface::class] = $this;
         $this->autowireItemProvider = new AutowireItemProvider($this);
     }
 

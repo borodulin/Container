@@ -44,4 +44,32 @@ class ParameterBagTest extends TestCase
         $this->assertEquals('test', $instance->getParam2());
         $this->assertEquals([1, 2, 3], $instance->getParam3());
     }
+
+    public function testParameterCallable(): void
+    {
+        $container = (new ContainerBuilder())
+            ->setConfig([
+                'function.alias' => function (int $paramAlias1, string $paramAlias2, iterable $paramAlias3 = null) {
+                    return new BuiltInTypeArgs($paramAlias1, $paramAlias2, $paramAlias3);
+                },
+                BuiltInTypeArgs::class,
+            ])
+            ->build();
+
+        $parameterBag = new Container([
+            'paramAlias1' => 1,
+            'paramAlias2' => 'test',
+            'paramAlias3' => [1, 2, 3],
+        ]);
+
+        $container->setParameterBag($parameterBag);
+
+        /** @var BuiltInTypeArgs $instance */
+        $instance = $container->get('function.alias');
+
+        $this->assertInstanceOf(BuiltInTypeArgs::class, $instance);
+        $this->assertEquals(1, $instance->getParam1());
+        $this->assertEquals('test', $instance->getParam2());
+        $this->assertEquals([1, 2, 3], $instance->getParam3());
+    }
 }

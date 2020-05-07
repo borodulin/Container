@@ -19,7 +19,7 @@ class DependencyResolver
         $this->itemProvider = $itemProvider;
     }
 
-    public function resolve($id): object
+    public function resolveId($id): object
     {
         if ($this->itemProvider->isResolved($id)) {
             return $this->itemProvider->getResolved($id);
@@ -33,7 +33,7 @@ class DependencyResolver
             $args = null;
             $constructor = $reflection->getConstructor();
             if (null !== $constructor) {
-                $args = $this->resolveConstructor($constructor);
+                $args = $this->resolveParameters($constructor->getParameters());
             }
             $instance = $args ? $reflection->newInstanceArgs($args) : $reflection->newInstance();
             $this->itemProvider->setResolved($id, $instance);
@@ -44,11 +44,25 @@ class DependencyResolver
         }
     }
 
-    private function resolveConstructor(\ReflectionMethod $constructor): array
+    public function resolveCallableArgs(callable $callable): array
+    {
+        $reflection = new \ReflectionFunction(\Closure::fromCallable($callable));
+
+        return $this->resolveParameters($reflection->getParameters());
+    }
+
+    /**
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @throws ContainerException
+     * @throws NotFoundException
+     * @throws \ReflectionException
+     */
+    private function resolveParameters(array $parameters): array
     {
         $result = [];
         $parameterBag = $this->itemProvider->getContainer()->getParameterBag();
-        foreach ($constructor->getParameters() as $parameter) {
+        foreach ($parameters as $parameter) {
             if (null !== $parameterBag) {
                 if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
                     if ($parameterBag->has($parameter->getName())) {
@@ -74,14 +88,10 @@ class DependencyResolver
                 if ($this->itemProvider->getContainer()->has($className)) {
                     $result[] = $this->itemProvider->getContainer()->get($className);
                 } else {
-                    $result[] = $this->resolve($parameter->getClass()->getName());
+                    $result[] = $this->resolveId($parameter->getClass()->getName());
                 }
             } else {
-                throw new ContainerException(sprintf(
-                    'Unable to autowire parameter %s of %s',
-                    $parameter->getName(),
-                    $constructor->class
-                ));
+                throw new ContainerException(sprintf('Unable to autowire parameter %s', $parameter->getName()));
             }
         }
 
@@ -95,7 +105,7 @@ class DependencyResolver
             if (class_exists($id)) {
                 $reflection = new \ReflectionClass($id);
                 if ($reflection->implementsInterface($class) || $reflection->isSubclassOf($class)) {
-                    $result[] = $this->resolve($id);
+                    $result[] = $this->resolveId($id);
                 }
             }
         }
