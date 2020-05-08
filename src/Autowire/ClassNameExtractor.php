@@ -14,26 +14,18 @@ class ClassNameExtractor
 
         $namespace = '';
 
-        while (true) {
-            $token = current($tokens);
-            if (false === $token) {
-                break;
-            }
+        $token = current($tokens);
+        while (false !== $token) {
             if ($this->isToken($token, T_NAMESPACE)) {
-                $this->nextToken($tokens, T_WHITESPACE);
-                $namespace = $this->nextToken($tokens, T_STRING);
-                while ($this->isNextToken($tokens, T_NS_SEPARATOR)) {
-                    $namespace .= '\\'.$this->nextToken($tokens, T_STRING);
-                }
+                $namespace = $this->extractNamespace($tokens);
             }
 
             if ($this->isToken($token, T_CLASS)) {
-                $this->nextToken($tokens, T_WHITESPACE);
-                $class = $this->nextToken($tokens, T_STRING);
+                $className = $this->extractClassName($tokens);
 
-                return $namespace ? "$namespace\\$class" : $class;
+                return $namespace ? "$namespace\\$className" : $className;
             }
-            next($tokens);
+            $token = next($tokens);
         }
 
         return null;
@@ -58,5 +50,23 @@ class ClassNameExtractor
         $token = next($tokens);
 
         return $this->isToken($token, $tokenType);
+    }
+
+    private function extractNamespace(array &$tokens): string
+    {
+        $this->nextToken($tokens, T_WHITESPACE);
+        $namespace = $this->nextToken($tokens, T_STRING);
+        while ($this->isNextToken($tokens, T_NS_SEPARATOR)) {
+            $namespace .= '\\'.$this->nextToken($tokens, T_STRING);
+        }
+
+        return $namespace;
+    }
+
+    private function extractClassName(array &$tokens): string
+    {
+        $this->nextToken($tokens, T_WHITESPACE);
+
+        return $this->nextToken($tokens, T_STRING);
     }
 }

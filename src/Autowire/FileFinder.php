@@ -6,6 +6,9 @@ namespace Borodulin\Container\Autowire;
 
 class FileFinder implements \IteratorAggregate
 {
+    /**
+     * @var string[]
+     */
     private $paths;
 
     public function __construct(array $paths = [])

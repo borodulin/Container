@@ -18,12 +18,10 @@ class Container implements ContainerInterface
      * @var AutowireItemProvider
      */
     private $autowireItemProvider;
-
     /**
      * @var ContainerInterface[]
      */
     private $delegates = [];
-
     /**
      * @var ContainerInterface|null
      */
