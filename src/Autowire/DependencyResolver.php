@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Borodulin\Container\Autowire;
 
+use Borodulin\Container\Container;
 use Borodulin\Container\ContainerException;
 use Borodulin\Container\NotFoundException;
 use Psr\Container\ContainerInterface;
@@ -14,10 +15,15 @@ class DependencyResolver
      * @var AutowireItemProvider
      */
     private $itemProvider;
+    /**
+     * @var Container
+     */
+    private $container;
 
     public function __construct(AutowireItemProvider $itemProvider)
     {
         $this->itemProvider = $itemProvider;
+        $this->container = $itemProvider->getContainer();
     }
 
     public function resolveId($id): object
@@ -61,13 +67,14 @@ class DependencyResolver
     private function resolveParameters(array $parameters): array
     {
         $args = [];
-        $parameterBag = $this->itemProvider->getContainer()->getParameterBag();
+        $parameterBug = $this->container->getParameterBag();
         foreach ($parameters as $parameter) {
-            if (null !== $parameterBag) {
-                if ($this->resolveParameterBag($args, $parameterBag, $parameter)) {
+            if (null !== $parameterBug) {
+                if ($this->resolveParameterBag($args, $parameter, $parameterBug)) {
                     continue;
                 }
             }
+
             if ($parameter->isVariadic()) {
                 $this->resolveVariadic($args, $parameter);
             } elseif ($parameter->isDefaultValueAvailable()) {
@@ -97,7 +104,7 @@ class DependencyResolver
         return $result;
     }
 
-    private function resolveParameterBag(array &$args, ContainerInterface $parameterBag, \ReflectionParameter $parameter): bool
+    private function resolveParameterBag(array &$args, \ReflectionParameter $parameter, ContainerInterface $parameterBag): bool
     {
         if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
             if ($parameterBag->has($parameter->getName())) {
@@ -123,8 +130,8 @@ class DependencyResolver
 
     private function resolveClass(string $className): object
     {
-        if ($this->itemProvider->getContainer()->has($className)) {
-            return $this->itemProvider->getContainer()->get($className);
+        if ($this->container->has($className)) {
+            return $this->container->get($className);
         } else {
             return $this->resolveId($className);
         }
