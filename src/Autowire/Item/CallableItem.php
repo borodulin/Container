@@ -23,11 +23,14 @@ class CallableItem implements AutowireItemInterface
         $this->callable = $callable;
     }
 
-    public function serialize()
+    public function serialize(): string
     {
         return serialize([$this->id, \Opis\Closure\serialize($this->callable)]);
     }
 
+    /**
+     * @param string $serialized
+     */
     public function unserialize($serialized): void
     {
         [$this->id, $this->callable] = unserialize($serialized);

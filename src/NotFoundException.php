@@ -9,7 +9,7 @@ use Throwable;
 
 class NotFoundException extends \Exception implements NotFoundExceptionInterface
 {
-    public function __construct(string $id, $code = 0, Throwable $previous = null)
+    public function __construct(string $id, int $code = 0, Throwable $previous = null)
     {
         parent::__construct("$id is not found.", $code, $previous);
     }

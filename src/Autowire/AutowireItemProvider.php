@@ -17,9 +17,13 @@ class AutowireItemProvider
      * @var Container
      */
     private $container;
-
+    /**
+     * @var array
+     */
     private $resolvedItems = [];
-
+    /**
+     * @var array
+     */
     private $resolvingItems = [];
     /**
      * @var DependencyResolver

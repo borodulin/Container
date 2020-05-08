@@ -28,6 +28,9 @@ class AliasItem implements AutowireItemInterface
         return serialize([$this->id, $this->alias]);
     }
 
+    /**
+     * @param string $serialized
+     */
     public function unserialize($serialized): void
     {
         [$this->id, $this->alias] = unserialize($serialized);

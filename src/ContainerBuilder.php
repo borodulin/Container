@@ -10,7 +10,6 @@ use Borodulin\Container\Autowire\Item\AliasItem;
 use Borodulin\Container\Autowire\Item\CallableItem;
 use Borodulin\Container\Autowire\Item\ClassItem;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class ContainerBuilder
 {
@@ -36,10 +35,6 @@ class ContainerBuilder
         $this->classNameExtractor = new ClassNameExtractor();
     }
 
-    /**
-     * @throws ContainerException
-     * @throws InvalidArgumentException
-     */
     public function build(): Container
     {
         if ($this->cache && $this->cache->has(static::class)) {

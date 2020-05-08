@@ -18,11 +18,14 @@ class ClassItem implements AutowireItemInterface
         $this->className = $className;
     }
 
-    public function serialize()
+    public function serialize(): string
     {
         return $this->className;
     }
 
+    /**
+     * @param string $serialized
+     */
     public function unserialize($serialized): void
     {
         $this->className = $serialized;
