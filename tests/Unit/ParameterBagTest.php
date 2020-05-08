@@ -72,4 +72,22 @@ class ParameterBagTest extends TestCase
         $this->assertEquals('test', $instance->getParam2());
         $this->assertEquals([1, 2, 3], $instance->getParam3());
     }
+
+    public function testNotFound(): void
+    {
+        $container = (new ContainerBuilder())
+            ->setConfig([BuiltInTypeArgs::class])
+            ->build();
+
+        $parameterBag = new Container([
+            'param12' => 1,
+            'param2' => 'test',
+            'param3' => [1, 2, 3],
+        ]);
+
+        $container->setParameterBag($parameterBag);
+
+        $this->expectException(ContainerException::class);
+        $container->get(BuiltInTypeArgs::class);
+    }
 }
