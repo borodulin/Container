@@ -47,28 +47,10 @@ class ContainerBuilder
         } else {
             $compilerItems = [];
 
-            foreach ($this->config as $id => $item) {
-                if (\is_string($item)) {
-                    $id = \is_int($id) ? $item : $id;
-                    $compilerItems[$id] = new AliasItem($id, $item);
-                } elseif (\is_callable($item)) {
-                    $id = (string) $id;
-                    $compilerItems[$id] = new CallableItem($id, $item);
-                } else {
-                    throw new ContainerException('Unsupported item type');
-                }
-            }
+            $this->buildConfig($compilerItems);
 
-            if (null !== $this->fileFinder) {
-                foreach ($this->fileFinder as $fileName) {
-                    $className = $this->classNameExtractor->extract($fileName);
-                    if (null !== $className) {
-                        if (!isset($compilerItems[$className])) {
-                            $compilerItems[$className] = new ClassItem($className);
-                        }
-                    }
-                }
-            }
+            $this->buildFiles($compilerItems);
+
             if ($this->cache) {
                 $this->cache->set(static::class, serialize($compilerItems));
             }
@@ -96,5 +78,35 @@ class ContainerBuilder
         $this->fileFinder = $fileFinder;
 
         return $this;
+    }
+
+    private function buildConfig(array &$compilerItems): void
+    {
+        foreach ($this->config as $id => $item) {
+            if (\is_string($item)) {
+                $id = \is_int($id) ? $item : $id;
+                $compilerItems[$id] = new AliasItem($id, $item);
+            } elseif (\is_callable($item)) {
+                $id = (string) $id;
+                $compilerItems[$id] = new CallableItem($id, $item);
+            } else {
+                throw new ContainerException('Unsupported item type');
+            }
+        }
+    }
+
+    private function buildFiles(array &$compilerItems): void
+    {
+        if (null !== $this->fileFinder) {
+            foreach ($this->fileFinder as $fileName) {
+                $className = $this->classNameExtractor->extract($fileName);
+                if (null !== $className) {
+                    if (!isset($compilerItems[$className])) {
+                        $compilerItems[$className] = new ClassItem($className);
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -6,6 +6,7 @@ namespace Borodulin\Container\Autowire;
 
 use Borodulin\Container\ContainerException;
 use Borodulin\Container\NotFoundException;
+use Psr\Container\ContainerInterface;
 
 class DependencyResolver
 {
@@ -55,45 +56,30 @@ class DependencyResolver
      * @param \ReflectionParameter[] $parameters
      *
      * @throws ContainerException
-     * @throws NotFoundException
      * @throws \ReflectionException
      */
     private function resolveParameters(array $parameters): array
     {
-        $result = [];
+        $args = [];
         $parameterBag = $this->itemProvider->getContainer()->getParameterBag();
         foreach ($parameters as $parameter) {
             if (null !== $parameterBag) {
-                if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
-                    if ($parameterBag->has($parameter->getName())) {
-                        $result[] = $parameterBag->get($parameter->getName());
-                        continue;
-                    }
+                if ($this->resolveParameterBag($args, $parameterBag, $parameter)) {
+                    continue;
                 }
             }
             if ($parameter->isVariadic()) {
-                if ($parameter->getClass()) {
-                    foreach ($this->findAllImplementors($parameter->getClass()->getName()) as $implementor) {
-                        $result[] = $implementor;
-                    }
-                } else {
-                    $result[] = null;
-                }
+                $this->resolveVariadic($args, $parameter);
             } elseif ($parameter->isDefaultValueAvailable()) {
-                $result[] = $parameter->getDefaultValue();
+                $args[] = $parameter->getDefaultValue();
             } elseif ($parameter->getClass()) {
-                $className = $parameter->getClass()->getName();
-                if ($this->itemProvider->getContainer()->has($className)) {
-                    $result[] = $this->itemProvider->getContainer()->get($className);
-                } else {
-                    $result[] = $this->resolveId($parameter->getClass()->getName());
-                }
+                $args[] = $this->resolveClass($parameter->getClass()->getName());
             } else {
                 throw new ContainerException(sprintf('Unable to autowire parameter %s', $parameter->getName()));
             }
         }
 
-        return $result;
+        return $args;
     }
 
     private function findAllImplementors(string $class): array
@@ -109,5 +95,38 @@ class DependencyResolver
         }
 
         return $result;
+    }
+
+    private function resolveParameterBag(array &$args, ContainerInterface $parameterBag, \ReflectionParameter $parameter): bool
+    {
+        if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
+            if ($parameterBag->has($parameter->getName())) {
+                $args[] = $parameterBag->get($parameter->getName());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function resolveVariadic(array &$args, \ReflectionParameter $parameter): void
+    {
+        if ($parameter->getClass()) {
+            foreach ($this->findAllImplementors($parameter->getClass()->getName()) as $implementor) {
+                $args[] = $implementor;
+            }
+        } else {
+            $args[] = null;
+        }
+    }
+
+    private function resolveClass(string $className): object
+    {
+        if ($this->itemProvider->getContainer()->has($className)) {
+            return $this->itemProvider->getContainer()->get($className);
+        } else {
+            return $this->resolveId($className);
+        }
     }
 }
