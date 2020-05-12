@@ -29,15 +29,21 @@ class ContainerBuilder
      * @var ClassNameExtractor
      */
     private $classNameExtractor;
+    /**
+     * @var int
+     */
+    private static $versionId = 0;
 
     public function __construct()
     {
         $this->classNameExtractor = new ClassNameExtractor();
+        ++self::$versionId;
     }
 
     public function build(): Container
     {
-        if ($this->cache && $this->cache->has(static::class)) {
+        $cacheKey = static::class.self::$versionId;
+        if ($this->cache && $this->cache->has($cacheKey)) {
             $compilerItems = unserialize($this->cache->get(static::class));
         } else {
             $compilerItems = [];
@@ -47,7 +53,7 @@ class ContainerBuilder
             $this->buildFiles($compilerItems);
 
             if ($this->cache) {
-                $this->cache->set(static::class, serialize($compilerItems));
+                $this->cache->set($cacheKey, serialize($compilerItems));
             }
         }
 
@@ -80,10 +86,10 @@ class ContainerBuilder
         foreach ($this->config as $id => $item) {
             if (\is_string($item)) {
                 $id = \is_int($id) ? $item : $id;
-                $compilerItems[$id] = new AliasItem($id, $item);
+                $compilerItems[$id] = new AliasItem($item);
             } elseif (\is_callable($item)) {
                 $id = (string) $id;
-                $compilerItems[$id] = new CallableItem($id, $item);
+                $compilerItems[$id] = new CallableItem($item);
             } else {
                 throw new ContainerException('Unsupported item type');
             }
@@ -102,6 +108,5 @@ class ContainerBuilder
                 }
             }
         }
-
     }
 }

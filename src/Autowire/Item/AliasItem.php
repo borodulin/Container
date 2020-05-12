@@ -11,21 +11,16 @@ class AliasItem implements AutowireItemInterface
     /**
      * @var string
      */
-    private $id;
-    /**
-     * @var string
-     */
     private $alias;
 
-    public function __construct(string $id, string $alias)
+    public function __construct(string $alias)
     {
-        $this->id = $id;
         $this->alias = $alias;
     }
 
     public function serialize(): string
     {
-        return serialize([$this->id, $this->alias]);
+        return serialize($this->alias);
     }
 
     /**
@@ -33,12 +28,7 @@ class AliasItem implements AutowireItemInterface
      */
     public function unserialize($serialized): void
     {
-        [$this->id, $this->alias] = unserialize($serialized);
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
+        $this->alias = unserialize($serialized);
     }
 
     public function getAlias(): string

@@ -27,7 +27,7 @@ class CacheTest extends TestCase
         ;
         $fileFinder = (new FileFinder())
             ->addPath(__DIR__.'/../Samples');
-        (new ContainerBuilder())
+        $builder = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
             ->setConfig([
                 'test.closure' => function (Bar $bar) {
@@ -35,10 +35,9 @@ class CacheTest extends TestCase
                 },
                 'test.alias' => 'test.closure',
             ])
-            ->setCache($cache)
-            ->build();
+            ->setCache($cache);
+        $builder->build();
         $this->assertIsArray($this->cache);
-        $this->assertEquals(ContainerBuilder::class, $this->cache[0]);
 
         $cache
             ->method('get')
@@ -53,10 +52,7 @@ class CacheTest extends TestCase
             ->willThrowException(new ContainerException())
         ;
 
-        $container = (new ContainerBuilder())
-            ->setFileFinder($fileFinder)
-            ->setCache($cache)
-            ->build();
+        $container = $builder->build();
 
         $this->assertIsArray($container->getIds());
     }

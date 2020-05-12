@@ -12,18 +12,23 @@ use Psr\Container\ContainerInterface;
 class DependencyResolver
 {
     /**
-     * @var AutowireItemProvider
+     * @var ResolverItemProvider
      */
     private $itemProvider;
     /**
      * @var Container
      */
     private $container;
+    /**
+     * @var InstanceFinder
+     */
+    private $instanceFinder;
 
-    public function __construct(AutowireItemProvider $itemProvider)
+    public function __construct(Container $container)
     {
-        $this->itemProvider = $itemProvider;
-        $this->container = $itemProvider->getContainer();
+        $this->itemProvider = new ResolverItemProvider();
+        $this->instanceFinder = new InstanceFinder($container->getIds());
+        $this->container = $container;
     }
 
     public function resolveId($id): object
@@ -89,21 +94,6 @@ class DependencyResolver
         return $args;
     }
 
-    private function findAllImplementors(string $class): array
-    {
-        $result = [];
-        foreach ($this->itemProvider->getIds() as $id) {
-            if (class_exists($id)) {
-                $reflection = new \ReflectionClass($id);
-                if ($reflection->implementsInterface($class) || $reflection->isSubclassOf($class)) {
-                    $result[] = $this->resolveId($id);
-                }
-            }
-        }
-
-        return $result;
-    }
-
     private function resolveParameterBag(array &$args, \ReflectionParameter $parameter, ContainerInterface $parameterBag): bool
     {
         if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
@@ -120,8 +110,8 @@ class DependencyResolver
     private function resolveVariadic(array &$args, \ReflectionParameter $parameter): void
     {
         if ($parameter->getClass()) {
-            foreach ($this->findAllImplementors($parameter->getClass()->getName()) as $implementor) {
-                $args[] = $implementor;
+            foreach ($this->instanceFinder->findInstanceOf($parameter->getClass()->getName()) as $implementor) {
+                $args[] = $this->resolveId($implementor);
             }
         } else {
             $args[] = null;

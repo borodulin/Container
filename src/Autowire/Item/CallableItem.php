@@ -9,23 +9,18 @@ use Borodulin\Container\Autowire\AutowireItemInterface;
 class CallableItem implements AutowireItemInterface
 {
     /**
-     * @var string
-     */
-    private $id;
-    /**
      * @var callable
      */
     private $callable;
 
-    public function __construct(string $id, callable $callable)
+    public function __construct(callable $callable)
     {
-        $this->id = $id;
         $this->callable = $callable;
     }
 
     public function serialize(): string
     {
-        return serialize([$this->id, \Opis\Closure\serialize($this->callable)]);
+        return \Opis\Closure\serialize($this->callable);
     }
 
     /**
@@ -33,13 +28,7 @@ class CallableItem implements AutowireItemInterface
      */
     public function unserialize($serialized): void
     {
-        [$this->id, $this->callable] = unserialize($serialized);
-        $this->callable = \Opis\Closure\unserialize($this->callable);
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
+        $this->callable = \Opis\Closure\unserialize($serialized);
     }
 
     public function getCallable(): callable
