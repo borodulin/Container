@@ -36,8 +36,8 @@ class ContainerBuilder
 
     public function __construct()
     {
-        $this->classNameExtractor = new ClassNameExtractor();
         ++self::$versionId;
+        $this->classNameExtractor = new ClassNameExtractor();
     }
 
     public function build(): Container
