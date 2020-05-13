@@ -41,21 +41,26 @@ class ItemProvider implements \IteratorAggregate, \Serializable
     public function findInstanceOf($interface): \Traversable
     {
         foreach ($this->items as $id => $item) {
-            if ($item instanceof ClassItem && class_exists($item->getClassName())) {
-                $className = $item->getClassName();
-            } elseif ($item instanceof AliasItem && class_exists($item->getAlias())) {
-                $className = $item->getAlias();
-            } else {
-                continue;
-            }
-            $reflection = new \ReflectionClass($className);
+            $reflection = $this->getItemClassReflection($item);
             if (
-                $reflection->isInstantiable()
+                $reflection
+                && $reflection->isInstantiable()
                 && ($reflection->implementsInterface($interface) || $reflection->isSubclassOf($interface))
             ) {
                 yield $id;
             }
         }
+    }
+
+    private function getItemClassReflection(AutowireItemInterface $item): ?\ReflectionClass
+    {
+        if ($item instanceof ClassItem && class_exists($item->getClassName())) {
+            return new \ReflectionClass($item->getClassName());
+        } elseif ($item instanceof AliasItem && class_exists($item->getAlias())) {
+            return new \ReflectionClass($item->getAlias());
+        }
+
+        return null;
     }
 
     /**
