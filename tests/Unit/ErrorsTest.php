@@ -8,7 +8,7 @@ use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
 use Borodulin\Container\NotFoundException;
-use Borodulin\Container\Tests\Samples\Errors\AbstractClass;
+use Borodulin\Container\Tests\Samples\Common\AbstractClass;
 use PHPUnit\Framework\TestCase;
 
 class ErrorsTest extends TestCase
@@ -16,18 +16,28 @@ class ErrorsTest extends TestCase
     public function testAbstractClass(): void
     {
         $fileFinder = (new FileFinder())
-            ->addPath(__DIR__.'/../Samples');
+            ->addPath(__DIR__.'/../Samples/Common');
         $container = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
             ->build();
-        $this->expectException(ContainerException::class);
+        $this->expectException(NotFoundException::class);
         $container->get(AbstractClass::class);
+    }
+
+    public function testAbstractClassConfig(): void
+    {
+        $this->expectException(ContainerException::class);
+        (new ContainerBuilder())
+            ->setConfig([
+                AbstractClass::class,
+            ])
+            ->build();
     }
 
     public function testNotFoundId(): void
     {
         $fileFinder = (new FileFinder())
-            ->addPath(__DIR__.'/../Samples');
+            ->addPath(__DIR__.'/../Samples/Common');
         $container = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
             ->build();
@@ -37,12 +47,11 @@ class ErrorsTest extends TestCase
 
     public function testNotFoundClass(): void
     {
-        $container = (new ContainerBuilder())
+        $this->expectException(NotFoundException::class);
+        (new ContainerBuilder())
             ->setConfig([
                 'test.not_found' => 'not_found',
             ])
             ->build();
-        $this->expectException(NotFoundException::class);
-        $container->get('test.not_found');
     }
 }

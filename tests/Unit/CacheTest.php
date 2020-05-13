@@ -7,8 +7,8 @@ namespace Borodulin\Container\Tests\Unit;
 use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
-use Borodulin\Container\Tests\Samples\Bar;
-use Borodulin\Container\Tests\Samples\Foo;
+use Borodulin\Container\Tests\Samples\Common\Bar;
+use Borodulin\Container\Tests\Samples\Common\Foo;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 
@@ -26,7 +26,9 @@ class CacheTest extends TestCase
             })
         ;
         $fileFinder = (new FileFinder())
-            ->addPath(__DIR__.'/../Samples');
+            ->addPath(__DIR__.'/../Samples/Common')
+            ->addPath(__DIR__.'/../Samples/Colors')
+        ;
         $builder = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
             ->setConfig([

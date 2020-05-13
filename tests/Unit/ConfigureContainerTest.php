@@ -6,8 +6,8 @@ namespace Borodulin\Container\Tests\Unit;
 
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
-use Borodulin\Container\Tests\Samples\Bar;
-use Borodulin\Container\Tests\Samples\Foo;
+use Borodulin\Container\Tests\Samples\Common\Bar;
+use Borodulin\Container\Tests\Samples\Common\Foo;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 

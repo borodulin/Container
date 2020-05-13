@@ -12,15 +12,20 @@ class CallableItem implements AutowireItemInterface
      * @var callable
      */
     private $callable;
+    /**
+     * @var array
+     */
+    private $args;
 
-    public function __construct(callable $callable)
+    public function __construct(callable $callable, array $args)
     {
         $this->callable = $callable;
+        $this->args = $args;
     }
 
     public function serialize(): string
     {
-        return \Opis\Closure\serialize($this->callable);
+        return serialize([\Opis\Closure\serialize($this->callable), $this->args]);
     }
 
     /**
@@ -28,11 +33,17 @@ class CallableItem implements AutowireItemInterface
      */
     public function unserialize($serialized): void
     {
-        $this->callable = \Opis\Closure\unserialize($serialized);
+        [$this->callable, $this->args] = unserialize($serialized);
+        $this->callable = \Opis\Closure\unserialize($this->callable);
     }
 
     public function getCallable(): callable
     {
         return $this->callable;
+    }
+
+    public function getArgs(): array
+    {
+        return $this->args;
     }
 }

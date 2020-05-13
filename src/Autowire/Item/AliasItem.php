@@ -12,15 +12,20 @@ class AliasItem implements AutowireItemInterface
      * @var string
      */
     private $alias;
+    /**
+     * @var AutowireItemInterface|null
+     */
+    private $classItem;
 
-    public function __construct(string $alias)
+    public function __construct(string $alias, AutowireItemInterface $classItem = null)
     {
         $this->alias = $alias;
+        $this->classItem = $classItem;
     }
 
     public function serialize(): string
     {
-        return serialize($this->alias);
+        return serialize([$this->alias, $this->classItem]);
     }
 
     /**
@@ -28,11 +33,16 @@ class AliasItem implements AutowireItemInterface
      */
     public function unserialize($serialized): void
     {
-        $this->alias = unserialize($serialized);
+        [$this->alias, $this->classItem] = unserialize($serialized);
     }
 
     public function getAlias(): string
     {
         return $this->alias;
+    }
+
+    public function getClassItem(): ?AutowireItemInterface
+    {
+        return $this->classItem;
     }
 }

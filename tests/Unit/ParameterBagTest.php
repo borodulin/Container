@@ -7,7 +7,7 @@ namespace Borodulin\Container\Tests\Unit;
 use Borodulin\Container\Container;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
-use Borodulin\Container\Tests\Samples\BuiltInTypeArgs;
+use Borodulin\Container\Tests\Samples\Common\BuiltInTypeArgs;
 use PHPUnit\Framework\TestCase;
 
 class ParameterBagTest extends TestCase

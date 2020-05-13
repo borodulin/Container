@@ -12,15 +12,20 @@ class ClassItem implements AutowireItemInterface
      * @var string
      */
     private $className;
+    /**
+     * @var array
+     */
+    private $args;
 
-    public function __construct(string $className)
+    public function __construct(string $className, array $args)
     {
         $this->className = $className;
+        $this->args = $args;
     }
 
     public function serialize(): string
     {
-        return $this->className;
+        return serialize([$this->className, $this->args]);
     }
 
     /**
@@ -28,11 +33,16 @@ class ClassItem implements AutowireItemInterface
      */
     public function unserialize($serialized): void
     {
-        $this->className = $serialized;
+        [$this->className, $this->args] = unserialize($serialized);
     }
 
     public function getClassName(): string
     {
         return $this->className;
+    }
+
+    public function getArgs(): array
+    {
+        return $this->args;
     }
 }

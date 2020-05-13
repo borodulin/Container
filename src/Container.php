@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Borodulin\Container;
 
-use Borodulin\Container\Autowire\AutowireItemBuilder;
 use Borodulin\Container\Autowire\AutowireItemInterface;
-use Borodulin\Container\Autowire\DependencyResolver;
+use Borodulin\Container\Autowire\AutowireItemResolver;
 use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
@@ -16,9 +15,9 @@ class Container implements ContainerInterface
      */
     private $items;
     /**
-     * @var AutowireItemBuilder
+     * @var AutowireItemResolver
      */
-    private $autowireItemBuilder;
+    private $autowireItemResolver;
     /**
      * @var ContainerInterface[]
      */
@@ -32,7 +31,7 @@ class Container implements ContainerInterface
     {
         $this->items = $items;
         $this->items[ContainerInterface::class] = $this;
-        $this->autowireItemBuilder = new AutowireItemBuilder(new DependencyResolver($this));
+        $this->autowireItemResolver = new AutowireItemResolver($this);
     }
 
     /**
@@ -42,7 +41,7 @@ class Container implements ContainerInterface
     {
         if (isset($this->items[$id])) {
             if ($this->items[$id] instanceof AutowireItemInterface) {
-                $this->items[$id] = $this->autowireItemBuilder->build($this->items[$id]);
+                $this->items[$id] = $this->autowireItemResolver->resolve($this->items[$id]);
             }
 
             return $this->items[$id];

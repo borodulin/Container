@@ -6,8 +6,8 @@ namespace Borodulin\Container\Tests\Unit;
 
 use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\ContainerBuilder;
-use Borodulin\Container\Tests\Samples\OptionalParam;
-use Borodulin\Container\Tests\Samples\Palette;
+use Borodulin\Container\Tests\Samples\Colors\Palette;
+use Borodulin\Container\Tests\Samples\Common\OptionalParam;
 use PHPUnit\Framework\TestCase;
 
 class AutowireTest extends TestCase
@@ -15,7 +15,7 @@ class AutowireTest extends TestCase
     public function testVariadic(): void
     {
         $fileFinder = (new FileFinder())
-            ->addPath(__DIR__.'/../Samples');
+            ->addPath(__DIR__.'/../Samples/Colors');
         $container = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
             ->build();
@@ -29,7 +29,7 @@ class AutowireTest extends TestCase
     public function testOptional(): void
     {
         $fileFinder = (new FileFinder())
-            ->addPath(__DIR__.'/../Samples');
+            ->addPath(__DIR__.'/../Samples/Common');
 
         $container = (new ContainerBuilder())
             ->setFileFinder($fileFinder)
