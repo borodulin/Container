@@ -8,16 +8,6 @@ use Borodulin\Container\ContainerException;
 
 class ClassNameExtractor
 {
-    /**
-     * @var bool
-     */
-    private $skipAbstract;
-
-    public function __construct(bool $skipAbstract = true)
-    {
-        $this->skipAbstract = $skipAbstract;
-    }
-
     public function extract($filename): ?string
     {
         $tokens = token_get_all(file_get_contents($filename));
@@ -26,13 +16,12 @@ class ClassNameExtractor
 
         $token = current($tokens);
         while (false !== $token) {
-            if ($this->skipAbstract && $this->isToken($token, T_ABSTRACT)) {
+            if ($this->isToken($token, T_ABSTRACT)) {
                 return null;
             }
             if ($this->isToken($token, T_NAMESPACE)) {
                 $namespace = $this->extractNamespace($tokens);
             }
-
             if ($this->isToken($token, T_CLASS)) {
                 $className = $this->extractClassName($tokens);
 

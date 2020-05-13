@@ -34,22 +34,29 @@ class ClassItemBuilder
                 throw new ContainerException("$className has circular reference dependency.");
             }
             $this->buildClasses[$className] = true;
-            $reflection = new \ReflectionClass($className);
-            if (!$reflection->isInstantiable()) {
-                throw new ContainerException("$className is not instantiable.");
-            }
-            $constructor = $reflection->getConstructor();
-            if (null !== $constructor) {
-                $args = (new DependencyBuilder($this->itemProvider, $this))
-                    ->buildParameters($constructor->getParameters());
-            } else {
-                $args = [];
-            }
-            $classItem = new ClassItem($className, $args);
+            $classItem = $this->buildClassItem($className);
             $this->itemProvider->addItem($className, $classItem);
+
             return $classItem;
         } else {
             throw new NotFoundException($className);
         }
+    }
+
+    private function buildClassItem($className): ClassItem
+    {
+        $reflection = new \ReflectionClass($className);
+        if (!$reflection->isInstantiable()) {
+            throw new ContainerException("$className is not instantiable.");
+        }
+        $constructor = $reflection->getConstructor();
+        if (null !== $constructor) {
+            $args = (new DependencyBuilder($this->itemProvider, $this))
+                ->buildParameters($constructor->getParameters());
+        } else {
+            $args = [];
+        }
+
+        return new ClassItem($className, $args);
     }
 }
