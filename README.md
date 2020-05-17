@@ -1,6 +1,6 @@
 # Simple Fast Autowiring Container 
 [![Build Status](https://travis-ci.org/borodulin/FastContainer.svg?branch=master)](https://travis-ci.org/borodulin/FastContainer)
-[![Coverage Status](https://coveralls.io/repos/github/borodulin/FastContainer/badge.svg?branch=master)](https://coveralls.io/github/borodulin/FastContainer?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/borodulin/FastContainer/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/borodulin/FastContainer/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/borodulin/FastContainer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/borodulin/FastContainer/?branch=master)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/borodulin/FastContainer/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 
