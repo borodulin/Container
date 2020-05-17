@@ -4,8 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b908a6679d4e564290c4bca6d03819dc",
+    "content-hash": "c8ac41e539665def691c2eea59cdc46a",
     "packages": [
+        {
+            "name": "borodulin/finder",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/borodulin/Finder.git",
+                "reference": "5d89550da996e5d46ac3038064a2968a61720294"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/borodulin/Finder/zipball/5d89550da996e5d46ac3038064a2968a61720294",
+                "reference": "5d89550da996e5d46ac3038064a2968a61720294",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "php-coveralls/php-coveralls": "^2.2",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpcov": "^7.0",
+                "phpunit/phpunit": "^9.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Borodulin\\Finder\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrey Borodulin",
+                    "email": "borodulin@gmail.com"
+                }
+            ],
+            "description": "Class finder",
+            "time": "2020-05-17T19:50:03+00:00"
+        },
         {
             "name": "opis/closure",
             "version": "3.5.1",
@@ -3829,7 +3872,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "borodulin/finder": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

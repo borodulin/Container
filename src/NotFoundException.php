@@ -7,7 +7,7 @@ namespace Borodulin\Container;
 use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
 
-class NotFoundException extends \Exception implements NotFoundExceptionInterface
+class NotFoundException extends \RuntimeException implements NotFoundExceptionInterface
 {
     public function __construct(string $id, int $code = 0, Throwable $previous = null)
     {

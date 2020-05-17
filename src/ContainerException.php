@@ -6,6 +6,6 @@ namespace Borodulin\Container;
 
 use Psr\Container\ContainerExceptionInterface;
 
-class ContainerException extends \Exception implements ContainerExceptionInterface
+class ContainerException extends \RuntimeException implements ContainerExceptionInterface
 {
 }

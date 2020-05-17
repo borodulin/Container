@@ -6,11 +6,10 @@ namespace Borodulin\Container;
 
 use Borodulin\Container\Autowire\CallableItemBuilder;
 use Borodulin\Container\Autowire\ClassItemBuilder;
-use Borodulin\Container\Autowire\ClassNameExtractor;
-use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\Autowire\Item\AliasItem;
 use Borodulin\Container\Autowire\Item\VariadicItem;
 use Borodulin\Container\Autowire\ItemProvider;
+use Borodulin\Finder\FinderInterface;
 use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
 
@@ -21,9 +20,9 @@ class ContainerBuilder
      */
     private static $builderId = 0;
     /**
-     * @var FileFinder
+     * @var FinderInterface
      */
-    private $fileFinder;
+    private $classFinder;
     /**
      * @var CacheInterface|null
      */
@@ -80,9 +79,9 @@ class ContainerBuilder
         return $this;
     }
 
-    public function setFileFinder(FileFinder $fileFinder): self
+    public function setClassFinder(FinderInterface $classFinder): self
     {
-        $this->fileFinder = $fileFinder;
+        $this->classFinder = $classFinder;
 
         return $this;
     }
@@ -111,14 +110,10 @@ class ContainerBuilder
 
     private function buildFiles(ItemProvider $itemProvider): void
     {
-        if (null !== $this->fileFinder) {
-            $classNameExtractor = new ClassNameExtractor();
-            foreach ($this->fileFinder as $fileName) {
-                $className = $classNameExtractor->extract($fileName);
-                if (null !== $className) {
-                    if (!$itemProvider->hasItem($className)) {
-                        $itemProvider->addItem($className, (new ClassItemBuilder($itemProvider))->build($className));
-                    }
+        if (null !== $this->classFinder) {
+            foreach ($this->classFinder as $className) {
+                if (!$itemProvider->hasItem($className)) {
+                    $itemProvider->addItem($className, (new ClassItemBuilder($itemProvider))->build($className));
                 }
             }
         }

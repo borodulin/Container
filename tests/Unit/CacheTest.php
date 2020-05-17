@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Borodulin\Container\Tests\Unit;
 
-use Borodulin\Container\Autowire\FileFinder;
 use Borodulin\Container\ContainerBuilder;
 use Borodulin\Container\ContainerException;
 use Borodulin\Container\Tests\Samples\Common\Bar;
 use Borodulin\Container\Tests\Samples\Common\Foo;
+use Borodulin\Finder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 
@@ -25,12 +25,12 @@ class CacheTest extends TestCase
                 $this->cache = [$name, $value];
             })
         ;
-        $fileFinder = (new FileFinder())
+        $fileFinder = (new ClassFinder())
             ->addPath(__DIR__.'/../Samples/Common')
             ->addPath(__DIR__.'/../Samples/Colors')
         ;
         $builder = (new ContainerBuilder())
-            ->setFileFinder($fileFinder)
+            ->setClassFinder($fileFinder)
             ->setConfig([
                 'test.closure' => function (Bar $bar) {
                     return new Foo($bar);

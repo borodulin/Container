@@ -21,11 +21,11 @@ Container can be initialized with file finder.
 
 ```php
 // autowire all classes in Samples directory
-$fileFinder = (new \Borodulin\Container\Autowire\FileFinder())
+$fileFinder = (new \Borodulin\Finder\ClassFinder())
     ->addPath(__DIR__.'/../Samples');
 // build container
 $container = (new \Borodulin\Container\ContainerBuilder())
-    ->setFileFinder($fileFinder)
+    ->setClassFinder($fileFinder)
     ->build();
 ```
 
